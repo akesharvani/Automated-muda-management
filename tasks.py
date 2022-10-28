@@ -62,30 +62,31 @@ def automate_via_api():
     title,content = open_word_doc()
     # Ip of blog post API
     for x in range(len(title)):
-        url = "http://127.0.0.1:8001/blog"
+        url = "https://muda-management.herokuapp.com/blog"
         payload = {
             "title": title[x],
             "description": content[x],
-            "author_id" : 4,
-            "category_id" : 4,
+            "author_id" : 1,
+            "category_id" : 1,
             "published": "DRAFT",
             "visibility": "PUBLIC"
         }
         
         try:
             data = requests.post(url,json = payload)
-            if data.status_code == 200:
+            if data.status_code == 201:
                 print("Blog posted successfully")
             else:
-                print("Blog number:"+x+" posting failed")
-        except:
-            print("Blog number:"+x+" posting failed")
+                print("Blog number:"+str(x)+" posting failed")
+        except Exception as e:
+            print(e)
+            print("Blog number:"+str(x)+" posting failed")
     
 
 def main():
     try:
-        automate_via_gui()
-        # automate_via_api()
+        #automate_via_gui()
+        automate_via_api()
     finally:
         browser.close_browser()
 
