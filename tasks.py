@@ -9,7 +9,7 @@ def open_word_doc():
     # Opening word document
     application = Application()
     application.open_application()
-    application.open_file("blogs_updated.docx") 
+    application.open_file("blogs.docx") 
 
     data = application.get_all_texts()
 
@@ -27,18 +27,23 @@ def open_word_doc():
     return title, content
 
 def automate_via_gui():
-    # Ip of admin panel muda management
+    # default data
     ip = "http://127.0.0.1:8001/admin/login/?next=/admin/"
-    
+    username = "admin"
+    password = "admin"
+    author_id = 1
+    category_id = 1
+
     # Logging in
     browser.open_available_browser(ip)
-    browser.input_text("id:id_username", "jayant")
-    browser.input_text("id:id_password", "jayant")
+    browser.input_text("id:id_username", username)
+    browser.input_text("id:id_password", password)
     browser.submit_form()
 
     # Clicking on blog and new blog
     browser.click_link("/admin/muda_management_blog/blog/")
     browser.click_link("/admin/muda_management_blog/blog/add/")
+
     # Getting the title and content
     title,content = open_word_doc()
 
@@ -47,8 +52,8 @@ def automate_via_gui():
         try: 
             browser.input_text("id:id_title", title[x])
             browser.input_text("id:id_description", content[x])
-            browser.select_from_list_by_value("id:id_author", "4")
-            browser.select_from_list_by_value("id:id_category", "4")
+            browser.select_from_list_by_value("id:id_author", author_id)
+            browser.select_from_list_by_value("id:id_category", category_id)
             browser.select_from_list_by_value("id:id_published", "DRAFT")
             browser.select_from_list_by_value("id:id_visibility", "PUBLIC")
             browser.click_button("_save")
@@ -62,16 +67,22 @@ def automate_via_api():
     title,content = open_word_doc()
     # Ip of blog post API
     for x in range(len(title)):
+        # Default Data:
         url = "https://muda-management.herokuapp.com/blog"
+        author_id = 1
+        category_id = 1
+
+        # Payload to be sent with the Rocket
         payload = {
             "title": title[x],
             "description": content[x],
-            "author_id" : 1,
-            "category_id" : 1,
+            "author_id" : author_id,
+            "category_id" : category_id,
             "published": "DRAFT",
             "visibility": "PUBLIC"
         }
         
+        # Sending the request / Launching the Rocket
         try:
             data = requests.post(url,json = payload)
             if data.status_code == 201:
